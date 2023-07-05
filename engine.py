@@ -36,7 +36,7 @@ def preprocess_image(image):
     return img
 
 
-def generate_comicbook_text(default_prompt, lst):
+def generate_text(default_prompt, lst):
     # Joining the text in the provided list
     prompt = default_prompt + str(lst)
     messages = [{"role": "user", "content": f"{prompt}"}]
@@ -122,7 +122,7 @@ def execute(image_path, prompt):
     reassembled_image = cv2.vconcat([cv2.hconcat(h_chunks) for h_chunks in chunks])
 
     processed_text = process_text(detected_texts)
-    ai_complete = generate_comicbook_text(prompt, processed_text)
+    ai_complete = generate_text(prompt, processed_text)
 
     filename = os.path.basename(image_path)  # Get the base filename
     filename_without_extension = os.path.splitext(filename)[
