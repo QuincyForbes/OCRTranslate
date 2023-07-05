@@ -36,9 +36,9 @@ def preprocess_image(image):
     return img
 
 
-def generate_text(default_prompt, lst):
+def generate_text(prompt, lst):
     # Joining the text in the provided list
-    prompt = default_prompt + str(lst)
+    prompt = prompt + str(lst)
     messages = [{"role": "user", "content": f"{prompt}"}]
     response = openai.ChatCompletion.create(
         model="gpt-4",

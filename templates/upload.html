@@ -52,12 +52,12 @@
           <label for="file">Select a file:</label>
           <input type="file" id="file" name="file" />
         </div>
+        <div class="form-group">
+          <h1>Prompt</h1>
+          <textarea class="text-box" name="promptbox">{{ prompt }}</textarea>
+        </div>
         <button type="submit">Process</button>
       </form>
-      <h1>Prompt</h1>
-      <textarea class="text-box" name="promptbox">
-{{ default_prompt }}</textarea
-      >
       <div id="image-container" style="display: none">
         <h2>Selected Image:</h2>
         <img

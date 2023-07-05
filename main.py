@@ -25,16 +25,16 @@ def output_file(filename):
 def upload_file():
     if request.method == "POST":
         file = request.files.get("file")
-        current_prompt = request.form.get("promptbox")
+
         if not file:
-            return render_template("upload.html", default_prompt=default_prompt)
+            return render_template("upload.html", prompt=default_prompt)
 
         if file:
-            print(current_prompt)
+            prompt_text = request.form.get('promptbox')
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
-            processed_name, detected_texts = en.execute(filepath, default_prompt)
+            processed_name, detected_texts = en.execute(filepath, prompt_text)
             processed_filepath = os.path.join(
                 app.config["OUTPUT_FOLDER"], processed_name
             )
@@ -44,10 +44,10 @@ def upload_file():
                 orig_image=filepath,
                 proc_image=processed_filepath,
                 texts=detected_texts,
-                default_prompt=default_prompt,
             )
+    return render_template("upload.html", prompt=default_prompt)
 
-    return render_template("upload.html", default_prompt=default_prompt)
+
 
 
 if __name__ == "__main__":
