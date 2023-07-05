@@ -36,6 +36,8 @@ python main.py
 ## Contributions
 
 Contributions to OCRTranslate are welcome! If you encounter any issues, have suggestions, or want to add new features, please submit a pull request on the GitHub repository.
+## Examples
+![test 2](https://github.com/QuincyForbes/OCRTranslate/assets/74159902/97dd782a-2637-4cae-9132-41d90e4d7a01)
 
 ## License
 
