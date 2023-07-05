@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Processed Image</title>
+    <style>
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+      }
+      .image-container {
+        flex-basis: 45%;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+      }
+      .image-container img {
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
+      .image-container h3,
+      .text-container h3 {
+        margin-top: 0;
+        font-size: 18px;
+        font-weight: bold;
+      }
+      .text-container {
+        flex-basis: 45%;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+      }
+      .text-box {
+        width: 100%;
+        min-height: 400px;
+        resize: vertical;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 5px;
+        box-sizing: border-box;
+        white-space: pre-wrap;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="image-container">
+        <h3>Original Image</h3>
+        <img src="{{ orig_image }}" alt="Original Image" />
+      </div>
+      <div class="image-container">
+        <h3>Processed Image</h3>
+        <img src="{{ proc_image }}" alt="Processed Image" />
+      </div>
+      <div class="text-container">
+        <h3>Text Annotations</h3>
+        <textarea class="text-box" readonly>{{ texts }}</textarea>
+      </div>
+    </div>
+  </body>
+</html>

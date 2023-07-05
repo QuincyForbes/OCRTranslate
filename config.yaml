@@ -1,0 +1,8 @@
+OpenAPIKey: ""
+DefaultPrompt: |
+  Your task is to process the provided list and perform the following actions:
+  Combine items in a way that would be natural for a conversation.
+  Provide an English translation.
+  "Language Text:
+  English Text:"
+  List:
