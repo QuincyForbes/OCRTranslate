@@ -5,7 +5,6 @@ import numpy as np
 import google.cloud.vision as vision
 from google.auth import load_credentials_from_file
 import io
-import math
 import os
 import re
 import openai
@@ -22,7 +21,86 @@ openai.api_key = config["OpenAPIKey"]
 credentials, project = load_credentials_from_file("cred.json")
 client = vision.ImageAnnotatorClient(credentials=credentials)
 
-# Other functions omitted for brevity
+def preprocess_image(image):
+    try:
+        # Convert to grayscale
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # Apply dilation and erosion to remove some noise
+        kernel = np.ones((1, 1), np.uint8)
+        gray = cv2.dilate(gray, kernel, iterations=1)
+        gray = cv2.erode(gray, kernel, iterations=1)
+
+        # Apply threshold to get image with only black and white
+        img = cv2.adaptiveThreshold(
+            gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 8
+        )
+
+        return img
+    except Exception as e:
+        logging.error(f"An error occurred during image preprocessing: {e}")
+        return None
+
+def generate_text(prompt, lst):
+    try:
+        # Joining the text in the provided list
+        prompt = prompt + str(lst)
+        messages = [{"role": "user", "content": f"{prompt}"}]
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+        )
+        response_message = response["choices"][0]["message"]["content"]
+        return response_message
+    except Exception as e:
+        logging.error(f"An error occurred during text generation: {e}")
+        return None
+
+def process_text(lst):
+    try:
+        cleaned_list = []
+        for item in lst:
+            item = re.sub(r"[\.\n]", "", item)  # Remove periods and newline characters
+            item = re.sub(r"[0-9]", "", item)  # Remove numbers
+            item = re.sub(r"[^\w\s]", "", item)  # Remove punctuation except whitespace
+            item = re.sub(r"[a-zA-Z]", "", item)  # Remove English characters
+            item = re.sub(
+                r"\s+", " ", item
+            )  # Replace multiple whitespaces with a single space
+            item = item.strip()  # Remove leading/trailing spaces
+            if item:
+                cleaned_list.append(item)
+        return cleaned_list
+    except Exception as e:
+        logging.error(f"An error occurred during text processing: {e}")
+        return []
+
+def process_chunk(chunk):
+    try:
+        # Convert image chunk to bytes
+        is_success, buffer = cv2.imencode(".png", chunk)
+        io_buf = io.BytesIO(buffer)
+        byte_img = io_buf.read()
+
+        image = vision.Image(content=byte_img)
+        response = client.text_detection(image=image)
+        texts = response.text_annotations
+
+        # Draw the boxes on the original image
+        for text in texts:
+            vertices = [(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices]
+            cv2.polylines(chunk, [np.array(vertices)], True, (0, 0, 255), 2)
+
+        if response.error.message:
+            raise Exception(
+                "{}\nFor more info on error messages, check: "
+                "https://cloud.google.com/apis/design/errors".format(response.error.message)
+            )
+
+        return chunk, [text.description for text in texts]
+    except Exception as e:
+        logging.error(f"An error occurred during chunk processing: {e}")
+        return None, []
 
 def execute(image_path, prompt):
     try:
